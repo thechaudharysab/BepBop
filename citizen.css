@@ -1,7 +1,7 @@
-.bg {
+/* .bg {
   background-color: #252235;
   overflow: hidden;
-}
+} */
 body,
 html {
   height: 100%;
@@ -22,4 +22,10 @@ svg {
 
 text {
   fill: white;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
 }
