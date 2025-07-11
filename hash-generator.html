@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>BepBop Hash Generator Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f9f9f9;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      width: 300px;
+      padding: 8px;
+      margin-top: 5px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      font-size: 16px;
+    }
+
+    .output {
+      margin-top: 30px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .output p {
+      margin: 10px 0;
+    }
+
+    .output strong {
+      display: inline-block;
+      width: 150px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Bepbop Hash Generator Example Tool</h1>
+
+  <label for="userId">Enter User ID:</label>
+  <input type="text" id="userId" placeholder="e.g., user123">
+
+  <button onclick="generateHash()">Generate Hash</button>
+
+  <div class="output" id="output" style="display:none;">
+    <p><strong>User ID:</strong> <span id="displayUserId"></span></p>
+    <p><strong>UUID:</strong> <span id="displayUUID"></span></p>
+    <p><strong>Timestamp:</strong> <span id="displayTimestamp"></span></p>
+    <p><strong>Hash (SHA-256):</strong> <span id="displayHash"></span></p>
+  </div>
+
+  <script>
+    // Function to generate UUID v4
+    function generateUUID() {
+      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+      );
+    }
+
+    // Function to generate SHA-256 hash
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return hashHex;
+    }
+
+    // Main function to generate and display the hash
+    async function generateHash() {
+      const userId = document.getElementById('userId').value.trim();
+      if (!userId) {
+        alert('Please enter a User ID.');
+        return;
+      }
+
+      const uuid = generateUUID();
+      const timestamp = new Date().toISOString();
+
+      const combinedString = `${userId}-${uuid}-${timestamp}`;
+      const hash = await sha256(combinedString);
+
+      document.getElementById('displayUserId').textContent = userId;
+      document.getElementById('displayUUID').textContent = uuid;
+      document.getElementById('displayTimestamp').textContent = timestamp;
+      document.getElementById('displayHash').textContent = hash;
+      document.getElementById('output').style.display = 'block';
+    }
+  </script>
+
+</body>
+
+</html>
